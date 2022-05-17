@@ -1072,8 +1072,22 @@ func schema_pkg_apis_application_v1alpha1_ApplicationSpec(ref common.ReferenceCa
 							Format:      "int64",
 						},
 					},
+					"sources": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Sources is a reference to the location of the application's manifests or chart",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1.ApplicationSource"),
+									},
+								},
+							},
+						},
+					},
 				},
-				Required: []string{"source", "destination", "project"},
+				Required: []string{"destination", "project"},
 			},
 		},
 		Dependencies: []string{
@@ -4030,6 +4044,20 @@ func schema_pkg_apis_application_v1alpha1_RevisionHistory(ref common.ReferenceCa
 						SchemaProps: spec.SchemaProps{
 							Description: "DeployStartedAt holds the time the sync operation started",
 							Ref:         ref("k8s.io/apimachinery/pkg/apis/meta/v1.Time"),
+						},
+					},
+					"sources": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Source is a reference to the application source used for the sync operation",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1.ApplicationSource"),
+									},
+								},
+							},
 						},
 					},
 				},

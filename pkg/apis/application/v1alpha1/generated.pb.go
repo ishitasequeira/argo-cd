@@ -4061,6 +4061,20 @@ func (m *ApplicationSpec) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.Sources) > 0 {
+		for iNdEx := len(m.Sources) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Sources[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenerated(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x42
+		}
+	}
 	if m.RevisionHistoryLimit != nil {
 		i = encodeVarintGenerated(dAtA, i, uint64(*m.RevisionHistoryLimit))
 		i--
@@ -7416,6 +7430,20 @@ func (m *RevisionHistory) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.Sources) > 0 {
+		for iNdEx := len(m.Sources) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Sources[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenerated(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x42
+		}
+	}
 	if m.DeployStartedAt != nil {
 		{
 			size, err := m.DeployStartedAt.MarshalToSizedBuffer(dAtA[:i])
@@ -8546,6 +8574,12 @@ func (m *ApplicationSpec) Size() (n int) {
 	}
 	if m.RevisionHistoryLimit != nil {
 		n += 1 + sovGenerated(uint64(*m.RevisionHistoryLimit))
+	}
+	if len(m.Sources) > 0 {
+		for _, e := range m.Sources {
+			l = e.Size()
+			n += 1 + l + sovGenerated(uint64(l))
+		}
 	}
 	return n
 }
@@ -9797,6 +9831,12 @@ func (m *RevisionHistory) Size() (n int) {
 		l = m.DeployStartedAt.Size()
 		n += 1 + l + sovGenerated(uint64(l))
 	}
+	if len(m.Sources) > 0 {
+		for _, e := range m.Sources {
+			l = e.Size()
+			n += 1 + l + sovGenerated(uint64(l))
+		}
+	}
 	return n
 }
 
@@ -10383,6 +10423,11 @@ func (this *ApplicationSpec) String() string {
 		repeatedStringForInfo += strings.Replace(strings.Replace(f.String(), "Info", "Info", 1), `&`, ``, 1) + ","
 	}
 	repeatedStringForInfo += "}"
+	repeatedStringForSources := "[]ApplicationSource{"
+	for _, f := range this.Sources {
+		repeatedStringForSources += strings.Replace(strings.Replace(f.String(), "ApplicationSource", "ApplicationSource", 1), `&`, ``, 1) + ","
+	}
+	repeatedStringForSources += "}"
 	s := strings.Join([]string{`&ApplicationSpec{`,
 		`Source:` + strings.Replace(strings.Replace(this.Source.String(), "ApplicationSource", "ApplicationSource", 1), `&`, ``, 1) + `,`,
 		`Destination:` + strings.Replace(strings.Replace(this.Destination.String(), "ApplicationDestination", "ApplicationDestination", 1), `&`, ``, 1) + `,`,
@@ -10391,6 +10436,7 @@ func (this *ApplicationSpec) String() string {
 		`IgnoreDifferences:` + repeatedStringForIgnoreDifferences + `,`,
 		`Info:` + repeatedStringForInfo + `,`,
 		`RevisionHistoryLimit:` + valueToStringGenerated(this.RevisionHistoryLimit) + `,`,
+		`Sources:` + repeatedStringForSources + `,`,
 		`}`,
 	}, "")
 	return s
@@ -11339,12 +11385,18 @@ func (this *RevisionHistory) String() string {
 	if this == nil {
 		return "nil"
 	}
+	repeatedStringForSources := "[]ApplicationSource{"
+	for _, f := range this.Sources {
+		repeatedStringForSources += strings.Replace(strings.Replace(f.String(), "ApplicationSource", "ApplicationSource", 1), `&`, ``, 1) + ","
+	}
+	repeatedStringForSources += "}"
 	s := strings.Join([]string{`&RevisionHistory{`,
 		`Revision:` + fmt.Sprintf("%v", this.Revision) + `,`,
 		`DeployedAt:` + strings.Replace(strings.Replace(fmt.Sprintf("%v", this.DeployedAt), "Time", "v1.Time", 1), `&`, ``, 1) + `,`,
 		`ID:` + fmt.Sprintf("%v", this.ID) + `,`,
 		`Source:` + strings.Replace(strings.Replace(this.Source.String(), "ApplicationSource", "ApplicationSource", 1), `&`, ``, 1) + `,`,
 		`DeployStartedAt:` + strings.Replace(fmt.Sprintf("%v", this.DeployStartedAt), "Time", "v1.Time", 1) + `,`,
+		`Sources:` + repeatedStringForSources + `,`,
 		`}`,
 	}, "")
 	return s
@@ -14926,6 +14978,40 @@ func (m *ApplicationSpec) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.RevisionHistoryLimit = &v
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sources", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sources = append(m.Sources, ApplicationSource{})
+			if err := m.Sources[len(m.Sources)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenerated(dAtA[iNdEx:])
@@ -26318,6 +26404,40 @@ func (m *RevisionHistory) Unmarshal(dAtA []byte) error {
 				m.DeployStartedAt = &v1.Time{}
 			}
 			if err := m.DeployStartedAt.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sources", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sources = append(m.Sources, ApplicationSource{})
+			if err := m.Sources[len(m.Sources)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
