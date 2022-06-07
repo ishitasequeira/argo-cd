@@ -398,10 +398,10 @@ type PullRequestGenerator struct {
 	Gitea           *PullRequestGeneratorGitea           `json:"gitea,omitempty" protobuf:"bytes,3,opt,name=gitea"`
 	BitbucketServer *PullRequestGeneratorBitbucketServer `json:"bitbucketServer,omitempty" protobuf:"bytes,4,opt,name=bitbucketServer"`
 	// Filters for which pull requests should be considered.
-	Filters []PullRequestGeneratorFilter `json:"filters,omitempty" protobuf:"bytes,4,rep,name=filters"`
+	Filters []PullRequestGeneratorFilter `json:"filters,omitempty" protobuf:"bytes,5,rep,name=filters"`
 	// Standard parameters.
-	RequeueAfterSeconds *int64                 `json:"requeueAfterSeconds,omitempty" protobuf:"varint,5,opt,name=requeueAfterSeconds"`
-	Template            ApplicationSetTemplate `json:"template,omitempty" protobuf:"bytes,6,opt,name=template"`
+	RequeueAfterSeconds *int64                 `json:"requeueAfterSeconds,omitempty" protobuf:"varint,6,opt,name=requeueAfterSeconds"`
+	Template            ApplicationSetTemplate `json:"template,omitempty" protobuf:"bytes,7,opt,name=template"`
 }
 
 // PullRequestGenerator defines connection info specific to Gitea.
@@ -435,13 +435,13 @@ type PullRequestGeneratorGithub struct {
 // PullRequestGeneratorGitLab defines connection info specific to GitLab.
 type PullRequestGeneratorGitLab struct {
 	// GitLab project to scan. Required.
-	Project string `json:"project"`
+	Project string `json:"project" protobuf:"bytes,1,opt,name=project"`
 	// The GitLab API URL to talk to. If blank, uses https://gitlab.com/.
-	API string `json:"api,omitempty"`
+	API string `json:"api,omitempty" protobuf:"bytes,2,opt,name=api"`
 	// Authentication token reference.
-	TokenRef *SecretRef `json:"tokenRef,omitempty"`
+	TokenRef *SecretRef `json:"tokenRef,omitempty" protobuf:"bytes,3,opt,name=tokenRef"`
 	// Labels is used to filter the MRs that you want to target
-	Labels []string `json:"labels,omitempty"`
+	Labels []string `json:"labels,omitempty" protobuf:"bytes,4,rep,name=labels"`
 }
 
 // PullRequestGenerator defines connection info specific to BitbucketServer.
