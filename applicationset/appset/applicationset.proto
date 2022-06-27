@@ -1,0 +1,164 @@
+syntax = "proto3";
+option go_package = "github.com/argoproj/argo-cd/v2/applicationset/appset";
+
+
+// ApplicationSet Service
+//
+// ApplicationSet Service API performs CRUD actions against applicationset resources
+package applicationset;
+
+import "google/api/annotations.proto";
+import "github.com/argoproj/argo-cd/v2/pkg/apis/applicationset/v1alpha1/generated.proto";
+import "github.com/argoproj/argo-cd/v2/reposerver/repository/repository.proto";
+import "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1/generated.proto";
+import "k8s.io/apimachinery/pkg/apis/meta/v1/generated.proto";
+
+// ApplicationSetQuery is a query for applicationset resources
+message ApplicationSetQuery {
+	// the applicationsets's name
+	string name = 1;
+	// forces applicationset reconciliation if set to true
+	string refresh = 2;
+	// the project names to restrict returned list applicationsets
+	repeated string projects = 3;
+	// when specified with a watch call, shows changes that occur after that particular version of a resource.
+	string resourceVersion = 4;
+	// the selector to restrict returned list to applications only with matched labels
+	string selector = 5;
+	// the repoURL to restrict returned list applications
+	string repo = 6;
+}
+
+message NodeQuery {
+	// the applicationset's name
+	string name = 1;
+}
+
+message ApplicationSetRevisionMetadataQuery{
+	// the applicationset's name
+	string name = 1;
+	// the revision of the applicationset
+	string revision = 2;
+}
+
+// ManifestQuery is a query for manifest resources
+message ApplicationSetManifestQuery {
+	string name = 1;
+	string revision = 2;
+}
+
+message ApplicationSetResponse {}
+
+message ApplicationSetCreateRequest {
+	github.com.argoproj.argo_cd.v2.pkg.apis.applicationset.v1alpha1.ApplicationSet applicationset = 1;
+	bool upsert = 2;
+	bool validate = 3;
+}
+
+message ApplicationSetUpdateRequest {
+	github.com.argoproj.argo_cd.v2.pkg.apis.applicationset.v1alpha1.ApplicationSet applicationset = 1;
+	bool validate = 2;
+}
+
+message ApplicationSetDeleteRequest {
+	string name = 1;
+	bool cascade = 2;
+	string propagationPolicy = 3;
+}
+
+// ApplicationSetPatchRequest is a request to patch an applicationset
+message ApplicationSetPatchRequest {
+	string name = 1;
+	string patch = 2;
+	string patchType = 3;
+}
+
+message ApplicationSetResourceRequest {
+	string name = 1;
+	string namespace = 2;
+	string resourceName = 3;
+	string version = 4;
+	string group = 5;
+	string kind = 6;
+}
+
+message ApplicationSetResourcePatchRequest {
+	string name = 1;
+	string namespace = 2;
+	string resourceName = 3;
+	string version = 4;
+	string group = 5;
+	string kind = 6;
+	string patch = 7;
+	string patchType = 8;
+}
+
+message ApplicationSetResourceDeleteRequest {
+	string name = 1;
+	string namespace = 2;
+	string resourceName = 3;
+	string version = 4;
+	string group = 5;
+	string kind = 6;
+	bool force = 7;
+	bool orphan = 8;
+}
+
+message ApplicationSetResourceActionRunRequest {
+	string name = 1;
+	string namespace = 2;
+	string resourceName = 3;
+	string version = 4;
+	string group = 5;
+	string kind = 6;
+	string action = 7;
+}
+
+
+message ApplicationSetResourceResponse {
+	string manifest = 1;
+}
+
+
+message ApplicationSetResourcesQuery {
+	string applicationsetName = 1;
+	string namespace = 2;
+	string name = 3;
+	string version = 4;
+	string group = 5;
+	string kind = 6;
+}
+
+
+// ApplicationSetService
+service ApplicationSetService {
+
+	//List returns list of applications
+	rpc List(ApplicationSetQuery) returns (github.com.argoproj.argo_cd.v2.pkg.apis.applicationset.v1alpha1.ApplicationSetList) {
+	}
+
+	//Create creates an applicationset
+	rpc Create (ApplicationSetCreateRequest) returns (github.com.argoproj.argo_cd.v2.pkg.apis.applicationset.v1alpha1.ApplicationSet) {
+	}
+
+	//Get returns an applicationset by name
+	rpc Get (ApplicationSetQuery) returns (github.com.argoproj.argo_cd.v2.pkg.apis.applicationset.v1alpha1.ApplicationSet) {
+	}
+
+	// Update updates an applicationset
+	rpc Update(ApplicationSetUpdateRequest) returns (github.com.argoproj.argo_cd.v2.pkg.apis.applicationset.v1alpha1.ApplicationSet) {
+	}
+
+	// Patch patch an application
+	rpc Patch(ApplicationSetPatchRequest) returns (github.com.argoproj.argo_cd.v2.pkg.apis.applicationset.v1alpha1.ApplicationSet) {
+	}
+
+	// Delete deletes an application set
+	rpc Delete(ApplicationSetDeleteRequest) returns (ApplicationSetResponse) {
+	}
+
+	// DeleteResource deletes a single application resource
+	rpc DeleteResource(ApplicationSetResourceDeleteRequest) returns (ApplicationSetResponse) {
+		// option (google.api.http).delete = "/api/v1/applicationsets/{name}/resource";
+	}
+}
