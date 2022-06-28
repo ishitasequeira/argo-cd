@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"text/tabwriter"
 
 	"github.com/spf13/cobra"
 
@@ -13,6 +14,7 @@ import (
 	cmdutil "github.com/argoproj/argo-cd/v2/cmd/util"
 	argocdclient "github.com/argoproj/argo-cd/v2/pkg/apiclient"
 	"github.com/argoproj/argo-cd/v2/pkg/apiclient/applicationset"
+	arogappsetv1 "github.com/argoproj/argo-cd/v2/pkg/apis/applicationset/v1alpha1"
 	"github.com/argoproj/argo-cd/v2/util/errors"
 	argoio "github.com/argoproj/argo-cd/v2/util/io"
 	"github.com/argoproj/argo-cd/v2/util/templates"
@@ -83,26 +85,39 @@ func NewApplicationSetCreateCommand(clientOpts *argocdclient.ClientOptions) *cob
 			log.Printf("AppSet Create command %s", strings.Join(args, " "))
 		},
 	}
-	// command.Flags().StringVarP(&fileURL, "file", "f", "", "Filename or URL to Kubernetes manifests for the ApplicationSet")
-	// err := command.Flags().SetAnnotation("file", cobra.BashCompFilenameExt, []string{"json", "yaml", "yml"})
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+
 	return command
 }
 
 // NewApplicationListommand returns a new instance of an `argocd appset list` command
 func NewApplicationSetListCommand(clientOpts *argocdclient.ClientOptions) *cobra.Command {
-	var ()
+	var (
+		output   string
+		selector string
+	)
 	var command = &cobra.Command{
 		Use:   "list",
 		Short: "list of applicationSet",
 		Example: `  # List all apps
-  argocd appset list`,
+  			argocd applicationset list`,
 		Run: func(c *cobra.Command, args []string) {
-			c.HelpFunc()(c, args)
-			log.Printf("AppSet List command %s", strings.Join(args, " "))
-			os.Exit(1)
+			conn, appIf := headless.NewClientOrDie(clientOpts, c).NewApplicationSetClientOrDie()
+			defer argoio.Close(conn)
+			apps, err := appIf.List(context.Background(), &applicationset.ApplicationSetQuery{Selector: selector})
+			errors.CheckError(err)
+			appList := apps.Items
+
+			switch output {
+			case "yaml", "json":
+				err := PrintResourceList(appList, output, false)
+				errors.CheckError(err)
+			case "name":
+				printApplicationSetNames(appList)
+			case "wide", "":
+				printApplicationSetTable(appList, &output)
+			default:
+				errors.CheckError(fmt.Errorf("unknown output format: %s", output))
+			}
 		},
 	}
 
@@ -145,4 +160,32 @@ func NewApplicationSetDeleteCommand(clientOpts *argocdclient.ClientOptions) *cob
 	}
 	command.Flags().StringVar(&appsetName, "applicationset-name", "foreground", "")
 	return command
+}
+
+// Print simple list of application names
+func printApplicationSetNames(apps []arogappsetv1.ApplicationSet) {
+	for _, app := range apps {
+		fmt.Println(app.Name)
+	}
+}
+
+// Print table of application data
+func printApplicationSetTable(apps []arogappsetv1.ApplicationSet, output *string) {
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	var fmtStr string
+	headers := []interface{}{"NAME", "CLUSTER", "NAMESPACE", "PROJECT", "STATUS", "HEALTH", "SYNCPOLICY", "CONDITIONS"}
+	if *output == "wide" {
+		fmtStr = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
+		headers = append(headers, "REPO", "PATH", "TARGET")
+	} else {
+		fmtStr = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
+	}
+	_, _ = fmt.Fprintf(w, fmtStr, headers...)
+	for _, app := range apps {
+		vals := []interface{}{
+			app.Name,
+		}
+		_, _ = fmt.Fprintf(w, fmtStr, vals...)
+	}
+	_ = w.Flush()
 }
