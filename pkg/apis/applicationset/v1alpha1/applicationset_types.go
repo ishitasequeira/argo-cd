@@ -300,14 +300,15 @@ type SCMProviderGenerator struct {
 	Bitbucket       *SCMProviderGeneratorBitbucket       `json:"bitbucket,omitempty" protobuf:"bytes,3,opt,name=bitbucket"`
 	BitbucketServer *SCMProviderGeneratorBitbucketServer `json:"bitbucketServer,omitempty" protobuf:"bytes,4,opt,name=bitbucketServer"`
 	Gitea           *SCMProviderGeneratorGitea           `json:"gitea,omitempty" protobuf:"bytes,5,opt,name=gitea"`
+	AzureDevOps     *SCMProviderGeneratorAzureDevOps     `json:"azureDevOps,omitempty" protobuf:"bytes,6,opt,name=azureDevOps"`
 	// Filters for which repos should be considered.
-	Filters []SCMProviderGeneratorFilter `json:"filters,omitempty" protobuf:"bytes,6,rep,name=filters"`
+	Filters []SCMProviderGeneratorFilter `json:"filters,omitempty" protobuf:"bytes,7,rep,name=filters"`
 	// Which protocol to use for the SCM URL. Default is provider-specific but ssh if possible. Not all providers
 	// necessarily support all protocols.
-	CloneProtocol string `json:"cloneProtocol,omitempty" protobuf:"bytes,7,opt,name=cloneProtocol"`
+	CloneProtocol string `json:"cloneProtocol,omitempty" protobuf:"bytes,8,opt,name=cloneProtocol"`
 	// Standard parameters.
-	RequeueAfterSeconds *int64                 `json:"requeueAfterSeconds,omitempty" protobuf:"varint,8,opt,name=requeueAfterSeconds"`
-	Template            ApplicationSetTemplate `json:"template,omitempty" protobuf:"bytes,9,opt,name=template"`
+	RequeueAfterSeconds *int64                 `json:"requeueAfterSeconds,omitempty" protobuf:"varint,9,opt,name=requeueAfterSeconds"`
+	Template            ApplicationSetTemplate `json:"template,omitempty" protobuf:"bytes,10,opt,name=template"`
 }
 
 // SCMProviderGeneratorGitea defines a connection info specific to Gitea.
@@ -370,6 +371,20 @@ type SCMProviderGeneratorBitbucketServer struct {
 	API string `json:"api" protobuf:"bytes,2,opt,name=api"`
 	// Credentials for Basic auth
 	BasicAuth *BasicAuthBitbucketServer `json:"basicAuth,omitempty" protobuf:"bytes,3,opt,name=basicAuth"`
+	// Scan all branches instead of just the default branch.
+	AllBranches bool `json:"allBranches,omitempty" protobuf:"varint,4,opt,name=allBranches"`
+}
+
+// SCMProviderGeneratorAzureDevOps defines connection info specific to Azure DevOps.
+type SCMProviderGeneratorAzureDevOps struct {
+	// Azure Devops organization. Required. E.g. "my-organization".
+	Organization string `json:"organization"`
+	// The URL to Azure DevOps. If blank, use https://dev.azure.com.
+	API string `json:"api,omitempty"`
+	// Azure Devops team project. Required. E.g. "my-team".
+	TeamProject string `json:"teamProject"`
+	// The Personal Access Token (PAT) to use when connecting. Required.
+	AccessTokenRef *SecretRef `json:"accessTokenRef"`
 	// Scan all branches instead of just the default branch.
 	AllBranches bool `json:"allBranches,omitempty" protobuf:"varint,4,opt,name=allBranches"`
 }
@@ -442,6 +457,8 @@ type PullRequestGeneratorGitLab struct {
 	TokenRef *SecretRef `json:"tokenRef,omitempty" protobuf:"bytes,3,opt,name=tokenRef"`
 	// Labels is used to filter the MRs that you want to target
 	Labels []string `json:"labels,omitempty" protobuf:"bytes,4,rep,name=labels"`
+	// PullRequestState is an additional MRs filter to get only those with a certain state. Default: "" (all states)
+	PullRequestState string `json:"pullRequestState,omitempty" protobuf:"bytes,5,rep,name=pullRequestState"`
 }
 
 // PullRequestGenerator defines connection info specific to BitbucketServer.

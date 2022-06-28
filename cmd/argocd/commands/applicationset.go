@@ -85,7 +85,6 @@ func NewApplicationSetCreateCommand(clientOpts *argocdclient.ClientOptions) *cob
 			log.Printf("AppSet Create command %s", strings.Join(args, " "))
 		},
 	}
-
 	return command
 }
 
