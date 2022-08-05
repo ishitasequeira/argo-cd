@@ -1119,20 +1119,20 @@ func (s *Server) validateAndNormalizeApp(ctx context.Context, app *appv1.Applica
 	if err != nil {
 		return fmt.Errorf("error getting kustomize settings: %w", err)
 	}
-	kustomizeOptions := []
-	if app.Spec.Sources != nil {
-		for source := range app.Spec.Sources {
-			if options, err := kustomizeSettings.GetOptions(source); err != nil {
-				return err
-			}
-			kustomizeOptions = append(kustomizeOptions, options)
-		}
-	} else {
-		kustomizeOptions, err := kustomizeSettings.GetOptions(app.Spec.Source)
-		if err != nil {
-			return err
-		}
+	// kustomizeOptions := []
+	// if app.Spec.Sources != nil {
+	// 	for source := range app.Spec.Sources {
+	// 		if options, err := kustomizeSettings.GetOptions(source); err != nil {
+	// 			return err
+	// 		}
+	// 		kustomizeOptions = append(kustomizeOptions, options)
+	// 	}
+	// } else {
+	kustomizeOptions, err := kustomizeSettings.GetOptions(app.Spec.Source)
+	if err != nil {
+		return err
 	}
+	// }
 	plugins, err := s.plugins()
 	if err != nil {
 		return fmt.Errorf("error getting plugins: %w", err)

@@ -171,6 +171,9 @@ message ApplicationSource {
 
   // Chart is a Helm chart name, and must be specified for applications sourced from a Helm repo.
   optional string chart = 12;
+
+  // Ref is reference to another source within sources field
+  optional string ref = 13;
 }
 
 // ApplicationSourceDirectory holds options for applications of type plain YAML or Jsonnet

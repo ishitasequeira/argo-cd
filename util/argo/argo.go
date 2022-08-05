@@ -168,30 +168,30 @@ func ValidateRepo(
 	}
 
 	errMessage := ""
-	if spec.Sources != nil {
-		for _, source := range spec.Sources {
-			repo, err := db.GetRepository(ctx, source.RepoURL)
-			if err != nil {
-				return nil, err
-			}
-			errRepos := make([]string, 0)
-			if err := TestRepoWithKnownType(ctx, repoClient, repo, app.Spec.Source.IsHelm(), app.Spec.Source.IsHelmOci()); err != nil {
-				errRepos = append(errRepos, repo.Repo)
-			}
-			if len(errRepos) > 0 {
-				errMessage = fmt.Sprintf("repositories not accessible: %v", strings.Join(errRepos, ", "))
-			}
+	// if spec.Sources != nil {
+	// 	for _, source := range spec.Sources {
+	// 		repo, err := db.GetRepository(ctx, source.RepoURL)
+	// 		if err != nil {
+	// 			return nil, err
+	// 		}
+	// 		errRepos := make([]string, 0)
+	// 		if err := TestRepoWithKnownType(ctx, repoClient, repo, app.Spec.Source.IsHelm(), app.Spec.Source.IsHelmOci()); err != nil {
+	// 			errRepos = append(errRepos, repo.Repo)
+	// 		}
+	// 		if len(errRepos) > 0 {
+	// 			errMessage = fmt.Sprintf("repositories not accessible: %v", strings.Join(errRepos, ", "))
+	// 		}
 
-		}
-	} else {
-		repo, err := db.GetRepository(ctx, spec.Source.RepoURL)
-		if err != nil {
-			return nil, err
-		}
-		if err := TestRepoWithKnownType(ctx, repoClient, repo, app.Spec.Source.IsHelm(), app.Spec.Source.IsHelmOci()); err != nil {
-			errMessage = fmt.Sprintf("repositories not accessible: %v", repo)
-		}
+	// 	}
+	// } else {
+	repo, err := db.GetRepository(ctx, spec.Source.RepoURL)
+	if err != nil {
+		return nil, err
 	}
+	if err := TestRepoWithKnownType(ctx, repoClient, repo, app.Spec.Source.IsHelm(), app.Spec.Source.IsHelmOci()); err != nil {
+		errMessage = fmt.Sprintf("repositories not accessible: %v", repo)
+	}
+	// }
 	repoAccessible := false
 
 	if errMessage != "" {
@@ -463,74 +463,74 @@ func verifyGenerateManifests(ctx context.Context, repoRes *argoappv1.Repository,
 		})
 	}
 
-	errMessage := make([]string, 0)
+	var errMessage string
 
-	if &spec.Sources != nil {
-		for _, source := range &spec.Sources {
-			req := apiclient.ManifestRequest{
-				Repo: &argoappv1.Repository{
-					Repo:  spec.Source.RepoURL,
-					Type:  repoRes.Type,
-					Name:  repoRes.Name,
-					Proxy: repoRes.Proxy,
-				},
-				Repos:              helmRepos,
-				Revision:           source.TargetRevision,
-				AppName:            app.Name,
-				Namespace:          spec.Destination.Namespace,
-				ApplicationSource:  source,
-				Plugins:            plugins,
-				KustomizeOptions:   kustomizeOptions,
-				KubeVersion:        kubeVersion,
-				ApiVersions:        apiVersions,
-				HelmOptions:        helmOptions,
-				HelmRepoCreds:      repositoryCredentials,
-				TrackingMethod:     string(GetTrackingMethod(settingsMgr)),
-				EnabledSourceTypes: enableGenerateManifests,
-				NoRevisionCache:    true,
-			}
-			req.Repo.CopyCredentialsFromRepo(repoRes)
-			req.Repo.CopySettingsFrom(repoRes)
+	// if &spec.Sources != nil {
+	// 	for _, source := range &spec.Sources {
+	// 		req := apiclient.ManifestRequest{
+	// 			Repo: &argoappv1.Repository{
+	// 				Repo:  spec.Source.RepoURL,
+	// 				Type:  repoRes.Type,
+	// 				Name:  repoRes.Name,
+	// 				Proxy: repoRes.Proxy,
+	// 			},
+	// 			Repos:              helmRepos,
+	// 			Revision:           source.TargetRevision,
+	// 			AppName:            app.Name,
+	// 			Namespace:          spec.Destination.Namespace,
+	// 			ApplicationSource:  source,
+	// 			Plugins:            plugins,
+	// 			KustomizeOptions:   kustomizeOptions,
+	// 			KubeVersion:        kubeVersion,
+	// 			ApiVersions:        apiVersions,
+	// 			HelmOptions:        helmOptions,
+	// 			HelmRepoCreds:      repositoryCredentials,
+	// 			TrackingMethod:     string(GetTrackingMethod(settingsMgr)),
+	// 			EnabledSourceTypes: enableGenerateManifests,
+	// 			NoRevisionCache:    true,
+	// 		}
+	// 		req.Repo.CopyCredentialsFromRepo(repoRes)
+	// 		req.Repo.CopySettingsFrom(repoRes)
 
-			// Only check whether we can access the application's path,
-			// and not whether it actually contains any manifests.
-			if _, err := repoClient.GenerateManifest(ctx, &req); err != nil {
-				errMessage = append(errMessage, fmt.Sprintf("Unable to generate manifests in %s: %v.", spec.Source.Path, err))
-			}
-		}
-	} else {
-		req := apiclient.ManifestRequest{
-			Repo: &argoappv1.Repository{
-				Repo:  spec.Source.RepoURL,
-				Type:  repoRes.Type,
-				Name:  repoRes.Name,
-				Proxy: repoRes.Proxy,
-			},
-			Repos:              helmRepos,
-			Revision:           spec.Source.TargetRevision,
-			AppName:            app.Name,
-			Namespace:          spec.Destination.Namespace,
-			ApplicationSource:  &spec.Source,
-			Plugins:            plugins,
-			KustomizeOptions:   kustomizeOptions,
-			KubeVersion:        kubeVersion,
-			ApiVersions:        apiVersions,
-			HelmOptions:        helmOptions,
-			HelmRepoCreds:      repositoryCredentials,
-			TrackingMethod:     string(GetTrackingMethod(settingsMgr)),
-			EnabledSourceTypes: enableGenerateManifests,
-			NoRevisionCache:    true,
-		}
-		req.Repo.CopyCredentialsFromRepo(repoRes)
-		req.Repo.CopySettingsFrom(repoRes)
-
-		// Only check whether we can access the application's path,
-		// and not whether it actually contains any manifests.
-		_, err := repoClient.GenerateManifest(ctx, &req)
-		errMessage = fmt.Sprintf("Unable to generate manifests in %s: %v", spec.Source.Path, err)
+	// 		// Only check whether we can access the application's path,
+	// 		// and not whether it actually contains any manifests.
+	// 		if _, err := repoClient.GenerateManifest(ctx, &req); err != nil {
+	// 			errMessage = append(errMessage, fmt.Sprintf("Unable to generate manifests in %s: %v.", spec.Source.Path, err))
+	// 		}
+	// 	}
+	// } else {
+	req := apiclient.ManifestRequest{
+		Repo: &argoappv1.Repository{
+			Repo:  spec.Source.RepoURL,
+			Type:  repoRes.Type,
+			Name:  repoRes.Name,
+			Proxy: repoRes.Proxy,
+		},
+		Repos:              helmRepos,
+		Revision:           spec.Source.TargetRevision,
+		AppName:            app.Name,
+		Namespace:          spec.Destination.Namespace,
+		ApplicationSource:  &spec.Source,
+		Plugins:            plugins,
+		KustomizeOptions:   kustomizeOptions,
+		KubeVersion:        kubeVersion,
+		ApiVersions:        apiVersions,
+		HelmOptions:        helmOptions,
+		HelmRepoCreds:      repositoryCredentials,
+		TrackingMethod:     string(GetTrackingMethod(settingsMgr)),
+		EnabledSourceTypes: enableGenerateManifests,
+		NoRevisionCache:    true,
 	}
+	req.Repo.CopyCredentialsFromRepo(repoRes)
+	req.Repo.CopySettingsFrom(repoRes)
 
-	if errMessage != nil {
+	// Only check whether we can access the application's path,
+	// and not whether it actually contains any manifests.
+	_, err := repoClient.GenerateManifest(ctx, &req)
+	errMessage = fmt.Sprintf("Unable to generate manifests in %s: %s", spec.Source.Path, err)
+	// }
+
+	if errMessage != "" {
 		conditions = append(conditions, argoappv1.ApplicationCondition{
 			Type:    argoappv1.ApplicationConditionInvalidSpecError,
 			Message: errMessage,
@@ -585,51 +585,51 @@ func NormalizeApplicationSpec(spec *argoappv1.ApplicationSpec) *argoappv1.Applic
 		spec.Project = argoappv1.DefaultAppProjectName
 	}
 
-	if spec.Sources != nil {
-		for source := range spec.Sources {
-			// 3. If any app sources are their zero values, then nil out the pointers to the source spec.
-			// This makes it easier for users to switch between app source types if they are not using
-			// any of the source-specific parameters.
-			if source.Kustomize != nil && source.Kustomize.IsZero() {
-				source.Kustomize = nil
-			}
-			if source.Helm != nil && source.Helm.IsZero() {
-				source.Helm = nil
-			}
-			if source.Directory != nil && source.Directory.IsZero() {
-				if source.Directory.Exclude != "" && source.Directory.Include != "" {
-					source.Directory = &argoappv1.ApplicationSourceDirectory{Exclude: source.Directory.Exclude, Include: source.Directory.Include}
-				} else if source.Directory.Exclude != "" {
-					source.Directory = &argoappv1.ApplicationSourceDirectory{Exclude: source.Directory.Exclude}
-				} else if source.Directory.Include != "" {
-					source.Directory = &argoappv1.ApplicationSourceDirectory{Include: source.Directory.Include}
-				} else {
-					source.Directory = nil
-				}
-			}
-		}
-	} else {
-		// 3. If any app sources are their zero values, then nil out the pointers to the source spec.
-		// This makes it easier for users to switch between app source types if they are not using
-		// any of the source-specific parameters.
-		if spec.Source.Kustomize != nil && spec.Source.Kustomize.IsZero() {
-			spec.Source.Kustomize = nil
-		}
-		if spec.Source.Helm != nil && spec.Source.Helm.IsZero() {
-			spec.Source.Helm = nil
-		}
-		if spec.Source.Directory != nil && spec.Source.Directory.IsZero() {
-			if spec.Source.Directory.Exclude != "" && spec.Source.Directory.Include != "" {
-				spec.Source.Directory = &argoappv1.ApplicationSourceDirectory{Exclude: spec.Source.Directory.Exclude, Include: spec.Source.Directory.Include}
-			} else if spec.Source.Directory.Exclude != "" {
-				spec.Source.Directory = &argoappv1.ApplicationSourceDirectory{Exclude: spec.Source.Directory.Exclude}
-			} else if spec.Source.Directory.Include != "" {
-				spec.Source.Directory = &argoappv1.ApplicationSourceDirectory{Include: spec.Source.Directory.Include}
-			} else {
-				spec.Source.Directory = nil
-			}
+	// if spec.Sources != nil {
+	// 	for source := range spec.Sources {
+	// 		// 3. If any app sources are their zero values, then nil out the pointers to the source spec.
+	// 		// This makes it easier for users to switch between app source types if they are not using
+	// 		// any of the source-specific parameters.
+	// 		if source.Kustomize != nil && source.Kustomize.IsZero() {
+	// 			source.Kustomize = nil
+	// 		}
+	// 		if source.Helm != nil && source.Helm.IsZero() {
+	// 			source.Helm = nil
+	// 		}
+	// 		if source.Directory != nil && source.Directory.IsZero() {
+	// 			if source.Directory.Exclude != "" && source.Directory.Include != "" {
+	// 				source.Directory = &argoappv1.ApplicationSourceDirectory{Exclude: source.Directory.Exclude, Include: source.Directory.Include}
+	// 			} else if source.Directory.Exclude != "" {
+	// 				source.Directory = &argoappv1.ApplicationSourceDirectory{Exclude: source.Directory.Exclude}
+	// 			} else if source.Directory.Include != "" {
+	// 				source.Directory = &argoappv1.ApplicationSourceDirectory{Include: source.Directory.Include}
+	// 			} else {
+	// 				source.Directory = nil
+	// 			}
+	// 		}
+	// 	}
+	// } else {
+	// 3. If any app sources are their zero values, then nil out the pointers to the source spec.
+	// This makes it easier for users to switch between app source types if they are not using
+	// any of the source-specific parameters.
+	if spec.Source.Kustomize != nil && spec.Source.Kustomize.IsZero() {
+		spec.Source.Kustomize = nil
+	}
+	if spec.Source.Helm != nil && spec.Source.Helm.IsZero() {
+		spec.Source.Helm = nil
+	}
+	if spec.Source.Directory != nil && spec.Source.Directory.IsZero() {
+		if spec.Source.Directory.Exclude != "" && spec.Source.Directory.Include != "" {
+			spec.Source.Directory = &argoappv1.ApplicationSourceDirectory{Exclude: spec.Source.Directory.Exclude, Include: spec.Source.Directory.Include}
+		} else if spec.Source.Directory.Exclude != "" {
+			spec.Source.Directory = &argoappv1.ApplicationSourceDirectory{Exclude: spec.Source.Directory.Exclude}
+		} else if spec.Source.Directory.Include != "" {
+			spec.Source.Directory = &argoappv1.ApplicationSourceDirectory{Include: spec.Source.Directory.Include}
+		} else {
+			spec.Source.Directory = nil
 		}
 	}
+	// }
 	return spec
 }
 

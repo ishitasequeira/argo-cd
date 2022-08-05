@@ -3607,6 +3607,11 @@ func (m *ApplicationSource) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	i -= len(m.Ref)
+	copy(dAtA[i:], m.Ref)
+	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Ref)))
+	i--
+	dAtA[i] = 0x6a
 	i -= len(m.Chart)
 	copy(dAtA[i:], m.Chart)
 	i = encodeVarintGenerated(dAtA, i, uint64(len(m.Chart)))
@@ -8406,6 +8411,8 @@ func (m *ApplicationSource) Size() (n int) {
 	}
 	l = len(m.Chart)
 	n += 1 + l + sovGenerated(uint64(l))
+	l = len(m.Ref)
+	n += 1 + l + sovGenerated(uint64(l))
 	return n
 }
 
@@ -10289,6 +10296,7 @@ func (this *ApplicationSource) String() string {
 		`Directory:` + strings.Replace(this.Directory.String(), "ApplicationSourceDirectory", "ApplicationSourceDirectory", 1) + `,`,
 		`Plugin:` + strings.Replace(this.Plugin.String(), "ApplicationSourcePlugin", "ApplicationSourcePlugin", 1) + `,`,
 		`Chart:` + fmt.Sprintf("%v", this.Chart) + `,`,
+		`Ref:` + fmt.Sprintf("%v", this.Ref) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -13494,6 +13502,38 @@ func (m *ApplicationSource) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Chart = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 13:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Ref", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenerated
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenerated
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Ref = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

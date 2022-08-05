@@ -359,6 +359,10 @@ spec:
                           name:
                             type: string
                         type: object
+                      ref:
+                        description: Ref is reference to another source within sources
+                          field
+                        type: string
                       repoURL:
                         description: RepoURL is the URL to the repository (Git or
                           Helm) that contains the application manifests
@@ -705,6 +709,10 @@ spec:
                       name:
                         type: string
                     type: object
+                  ref:
+                    description: Ref is reference to another source within sources
+                      field
+                    type: string
                   repoURL:
                     description: RepoURL is the URL to the repository (Git or Helm)
                       that contains the application manifests
@@ -935,6 +943,10 @@ spec:
                         name:
                           type: string
                       type: object
+                    ref:
+                      description: Ref is reference to another source within sources
+                        field
+                      type: string
                     repoURL:
                       description: RepoURL is the URL to the repository (Git or Helm)
                         that contains the application manifests
@@ -1291,6 +1303,10 @@ spec:
                             name:
                               type: string
                           type: object
+                        ref:
+                          description: Ref is reference to another source within sources
+                            field
+                          type: string
                         repoURL:
                           description: RepoURL is the URL to the repository (Git or
                             Helm) that contains the application manifests
@@ -1529,6 +1545,10 @@ spec:
                               name:
                                 type: string
                             type: object
+                          ref:
+                            description: Ref is reference to another source within
+                              sources field
+                            type: string
                           repoURL:
                             description: RepoURL is the URL to the repository (Git
                               or Helm) that contains the application manifests
@@ -1903,6 +1923,10 @@ spec:
                                   name:
                                     type: string
                                 type: object
+                              ref:
+                                description: Ref is reference to another source within
+                                  sources field
+                                type: string
                               repoURL:
                                 description: RepoURL is the URL to the repository
                                   (Git or Helm) that contains the application manifests
@@ -2247,6 +2271,10 @@ spec:
                               name:
                                 type: string
                             type: object
+                          ref:
+                            description: Ref is reference to another source within
+                              sources field
+                            type: string
                           repoURL:
                             description: RepoURL is the URL to the repository (Git
                               or Helm) that contains the application manifests
@@ -2585,6 +2613,10 @@ spec:
                               name:
                                 type: string
                             type: object
+                          ref:
+                            description: Ref is reference to another source within
+                              sources field
+                            type: string
                           repoURL:
                             description: RepoURL is the URL to the repository (Git
                               or Helm) that contains the application manifests

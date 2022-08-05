@@ -270,6 +270,8 @@ spec:
                                         name:
                                           type: string
                                       type: object
+                                    ref:
+                                      type: string
                                     repoURL:
                                       type: string
                                     targetRevision:
@@ -409,6 +411,8 @@ spec:
                                           name:
                                             type: string
                                         type: object
+                                      ref:
+                                        type: string
                                       repoURL:
                                         type: string
                                       targetRevision:
@@ -696,6 +700,8 @@ spec:
                                         name:
                                           type: string
                                       type: object
+                                    ref:
+                                      type: string
                                     repoURL:
                                       type: string
                                     targetRevision:
@@ -835,6 +841,8 @@ spec:
                                           name:
                                             type: string
                                         type: object
+                                      ref:
+                                        type: string
                                       repoURL:
                                         type: string
                                       targetRevision:
@@ -1124,6 +1132,8 @@ spec:
                                         name:
                                           type: string
                                       type: object
+                                    ref:
+                                      type: string
                                     repoURL:
                                       type: string
                                     targetRevision:
@@ -1263,6 +1273,8 @@ spec:
                                           name:
                                             type: string
                                         type: object
+                                      ref:
+                                        type: string
                                       repoURL:
                                         type: string
                                       targetRevision:
@@ -1528,6 +1540,8 @@ spec:
                                         name:
                                           type: string
                                       type: object
+                                    ref:
+                                      type: string
                                     repoURL:
                                       type: string
                                     targetRevision:
@@ -1667,6 +1681,8 @@ spec:
                                           name:
                                             type: string
                                         type: object
+                                      ref:
+                                        type: string
                                       repoURL:
                                         type: string
                                       targetRevision:
@@ -1962,6 +1978,8 @@ spec:
                                                   name:
                                                     type: string
                                                 type: object
+                                              ref:
+                                                type: string
                                               repoURL:
                                                 type: string
                                               targetRevision:
@@ -2101,6 +2119,8 @@ spec:
                                                     name:
                                                       type: string
                                                   type: object
+                                                ref:
+                                                  type: string
                                                 repoURL:
                                                   type: string
                                                 targetRevision:
@@ -2388,6 +2408,8 @@ spec:
                                                   name:
                                                     type: string
                                                 type: object
+                                              ref:
+                                                type: string
                                               repoURL:
                                                 type: string
                                               targetRevision:
@@ -2527,6 +2549,8 @@ spec:
                                                     name:
                                                       type: string
                                                   type: object
+                                                ref:
+                                                  type: string
                                                 repoURL:
                                                   type: string
                                                 targetRevision:
@@ -2816,6 +2840,8 @@ spec:
                                                   name:
                                                     type: string
                                                 type: object
+                                              ref:
+                                                type: string
                                               repoURL:
                                                 type: string
                                               targetRevision:
@@ -2955,6 +2981,8 @@ spec:
                                                     name:
                                                       type: string
                                                   type: object
+                                                ref:
+                                                  type: string
                                                 repoURL:
                                                   type: string
                                                 targetRevision:
@@ -3220,6 +3248,8 @@ spec:
                                                   name:
                                                     type: string
                                                 type: object
+                                              ref:
+                                                type: string
                                               repoURL:
                                                 type: string
                                               targetRevision:
@@ -3359,6 +3389,8 @@ spec:
                                                     name:
                                                       type: string
                                                   type: object
+                                                ref:
+                                                  type: string
                                                 repoURL:
                                                   type: string
                                                 targetRevision:
@@ -3742,6 +3774,8 @@ spec:
                                                   name:
                                                     type: string
                                                 type: object
+                                              ref:
+                                                type: string
                                               repoURL:
                                                 type: string
                                               targetRevision:
@@ -3881,6 +3915,8 @@ spec:
                                                     name:
                                                       type: string
                                                   type: object
+                                                ref:
+                                                  type: string
                                                 repoURL:
                                                   type: string
                                                 targetRevision:
@@ -4311,6 +4347,8 @@ spec:
                                                   name:
                                                     type: string
                                                 type: object
+                                              ref:
+                                                type: string
                                               repoURL:
                                                 type: string
                                               targetRevision:
@@ -4450,6 +4488,8 @@ spec:
                                                     name:
                                                       type: string
                                                   type: object
+                                                ref:
+                                                  type: string
                                                 repoURL:
                                                   type: string
                                                 targetRevision:
@@ -4731,6 +4771,8 @@ spec:
                                         name:
                                           type: string
                                       type: object
+                                    ref:
+                                      type: string
                                     repoURL:
                                       type: string
                                     targetRevision:
@@ -4870,6 +4912,8 @@ spec:
                                           name:
                                             type: string
                                         type: object
+                                      ref:
+                                        type: string
                                       repoURL:
                                         type: string
                                       targetRevision:
@@ -5165,6 +5209,8 @@ spec:
                                                   name:
                                                     type: string
                                                 type: object
+                                              ref:
+                                                type: string
                                               repoURL:
                                                 type: string
                                               targetRevision:
@@ -5304,6 +5350,8 @@ spec:
                                                     name:
                                                       type: string
                                                   type: object
+                                                ref:
+                                                  type: string
                                                 repoURL:
                                                   type: string
                                                 targetRevision:
@@ -5591,6 +5639,8 @@ spec:
                                                   name:
                                                     type: string
                                                 type: object
+                                              ref:
+                                                type: string
                                               repoURL:
                                                 type: string
                                               targetRevision:
@@ -5730,6 +5780,8 @@ spec:
                                                     name:
                                                       type: string
                                                   type: object
+                                                ref:
+                                                  type: string
                                                 repoURL:
                                                   type: string
                                                 targetRevision:
@@ -6019,6 +6071,8 @@ spec:
                                                   name:
                                                     type: string
                                                 type: object
+                                              ref:
+                                                type: string
                                               repoURL:
                                                 type: string
                                               targetRevision:
@@ -6158,6 +6212,8 @@ spec:
                                                     name:
                                                       type: string
                                                   type: object
+                                                ref:
+                                                  type: string
                                                 repoURL:
                                                   type: string
                                                 targetRevision:
@@ -6423,6 +6479,8 @@ spec:
                                                   name:
                                                     type: string
                                                 type: object
+                                              ref:
+                                                type: string
                                               repoURL:
                                                 type: string
                                               targetRevision:
@@ -6562,6 +6620,8 @@ spec:
                                                     name:
                                                       type: string
                                                   type: object
+                                                ref:
+                                                  type: string
                                                 repoURL:
                                                   type: string
                                                 targetRevision:
@@ -6945,6 +7005,8 @@ spec:
                                                   name:
                                                     type: string
                                                 type: object
+                                              ref:
+                                                type: string
                                               repoURL:
                                                 type: string
                                               targetRevision:
@@ -7084,6 +7146,8 @@ spec:
                                                     name:
                                                       type: string
                                                   type: object
+                                                ref:
+                                                  type: string
                                                 repoURL:
                                                   type: string
                                                 targetRevision:
@@ -7514,6 +7578,8 @@ spec:
                                                   name:
                                                     type: string
                                                 type: object
+                                              ref:
+                                                type: string
                                               repoURL:
                                                 type: string
                                               targetRevision:
@@ -7653,6 +7719,8 @@ spec:
                                                     name:
                                                       type: string
                                                   type: object
+                                                ref:
+                                                  type: string
                                                 repoURL:
                                                   type: string
                                                 targetRevision:
@@ -7938,6 +8006,8 @@ spec:
                                         name:
                                           type: string
                                       type: object
+                                    ref:
+                                      type: string
                                     repoURL:
                                       type: string
                                     targetRevision:
@@ -8077,6 +8147,8 @@ spec:
                                           name:
                                             type: string
                                         type: object
+                                      ref:
+                                        type: string
                                       repoURL:
                                         type: string
                                       targetRevision:
@@ -8457,6 +8529,8 @@ spec:
                                         name:
                                           type: string
                                       type: object
+                                    ref:
+                                      type: string
                                     repoURL:
                                       type: string
                                     targetRevision:
@@ -8596,6 +8670,8 @@ spec:
                                           name:
                                             type: string
                                         type: object
+                                      ref:
+                                        type: string
                                       repoURL:
                                         type: string
                                       targetRevision:
@@ -9026,6 +9102,8 @@ spec:
                                         name:
                                           type: string
                                       type: object
+                                    ref:
+                                      type: string
                                     repoURL:
                                       type: string
                                     targetRevision:
@@ -9165,6 +9243,8 @@ spec:
                                           name:
                                             type: string
                                         type: object
+                                      ref:
+                                        type: string
                                       repoURL:
                                         type: string
                                       targetRevision:
@@ -9453,6 +9533,8 @@ spec:
                               name:
                                 type: string
                             type: object
+                          ref:
+                            type: string
                           repoURL:
                             type: string
                           targetRevision:
@@ -9592,6 +9674,8 @@ spec:
                                 name:
                                   type: string
                               type: object
+                            ref:
+                              type: string
                             repoURL:
                               type: string
                             targetRevision:
