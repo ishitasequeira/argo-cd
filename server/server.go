@@ -74,7 +74,6 @@ import (
 	appclientset "github.com/argoproj/argo-cd/v2/pkg/client/clientset/versioned"
 	appinformer "github.com/argoproj/argo-cd/v2/pkg/client/informers/externalversions"
 	applisters "github.com/argoproj/argo-cd/v2/pkg/client/listers/application/v1alpha1"
-	appsetlisters "github.com/argoproj/argo-cd/v2/pkg/client/listers/applicationset/v1alpha1"
 	repoapiclient "github.com/argoproj/argo-cd/v2/reposerver/apiclient"
 	repocache "github.com/argoproj/argo-cd/v2/reposerver/cache"
 	"github.com/argoproj/argo-cd/v2/server/account"
@@ -173,7 +172,7 @@ type ArgoCDServer struct {
 	appInformer    cache.SharedIndexInformer
 	appLister      applisters.ApplicationNamespaceLister
 	appsetInformer cache.SharedIndexInformer
-	appsetLister   appsetlisters.ApplicationSetNamespaceLister
+	appsetLister   applisters.ApplicationSetNamespaceLister
 	db             db.ArgoDB
 
 	// stopCh is the channel which when closed, will shutdown the Argo CD server
@@ -244,8 +243,8 @@ func NewServer(ctx context.Context, opts ArgoCDServerOpts) *ArgoCDServer {
 	appInformer := factory.Argoproj().V1alpha1().Applications().Informer()
 	appLister := factory.Argoproj().V1alpha1().Applications().Lister().Applications(opts.Namespace)
 
-	appsetInformer := factory.Appset().V1alpha1().ApplicationSets().Informer()
-	appsetLister := factory.Appset().V1alpha1().ApplicationSets().Lister().ApplicationSets(opts.Namespace)
+	appsetInformer := factory.Argoproj().V1alpha1().ApplicationSets().Informer()
+	appsetLister := factory.Argoproj().V1alpha1().ApplicationSets().Lister().ApplicationSets(opts.Namespace)
 
 	userStateStorage := util_session.NewUserStateStorage(opts.RedisClient)
 	sessionMgr := util_session.NewSessionManager(settingsMgr, projLister, opts.DexServerAddr, opts.DexTLSConfig, userStateStorage)

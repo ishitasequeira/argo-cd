@@ -25,8 +25,6 @@ import (
 
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	"github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
 )
 
 // Utility struct for a reference to a secret key.
@@ -65,7 +63,7 @@ type ApplicationSetSyncPolicy struct {
 // ApplicationSetTemplate represents argocd ApplicationSpec
 type ApplicationSetTemplate struct {
 	ApplicationSetTemplateMeta `json:"metadata" protobuf:"bytes,1,name=metadata"`
-	Spec                       v1alpha1.ApplicationSpec `json:"spec" protobuf:"bytes,2,name=spec"`
+	Spec                       ApplicationSpec `json:"spec" protobuf:"bytes,2,name=spec"`
 }
 
 // ApplicationSetTemplateMeta represents the Argo CD application fields that may

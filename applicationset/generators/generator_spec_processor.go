@@ -2,11 +2,12 @@ package generators
 
 import (
 	"encoding/json"
-	"github.com/argoproj/argo-cd/v2/applicationset/utils"
-	"github.com/valyala/fasttemplate"
 	"reflect"
 
-	argoprojiov1alpha1 "github.com/argoproj/argo-cd/v2/pkg/apis/applicationset/v1alpha1"
+	"github.com/argoproj/argo-cd/v2/applicationset/utils"
+	"github.com/valyala/fasttemplate"
+
+	argoprojiov1alpha1 "github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
 	"github.com/imdario/mergo"
 	log "github.com/sirupsen/logrus"
 )

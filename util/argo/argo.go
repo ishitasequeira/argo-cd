@@ -20,7 +20,6 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 
 	argoappv1 "github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
-	argoappsetv1 "github.com/argoproj/argo-cd/v2/pkg/apis/applicationset/v1alpha1"
 	"github.com/argoproj/argo-cd/v2/pkg/client/clientset/versioned/typed/application/v1alpha1"
 	applicationsv1 "github.com/argoproj/argo-cd/v2/pkg/client/listers/application/v1alpha1"
 	"github.com/argoproj/argo-cd/v2/reposerver/apiclient"
@@ -63,7 +62,7 @@ func FilterByProjects(apps []argoappv1.Application, projects []string) []argoapp
 }
 
 // FilterAppSetsByProjects returns applications which belongs to the specified project
-func FilterAppSetsByProjects(appsets []argoappsetv1.ApplicationSet, projects []string) []argoappsetv1.ApplicationSet {
+func FilterAppSetsByProjects(appsets []argoappv1.ApplicationSet, projects []string) []argoappv1.ApplicationSet {
 	if len(projects) == 0 {
 		return appsets
 	}
@@ -71,7 +70,7 @@ func FilterAppSetsByProjects(appsets []argoappsetv1.ApplicationSet, projects []s
 	for i := range projects {
 		projectsMap[projects[i]] = true
 	}
-	items := make([]argoappsetv1.ApplicationSet, 0)
+	items := make([]argoappv1.ApplicationSet, 0)
 	for i := 0; i < len(appsets); i++ {
 		a := appsets[i]
 		if _, ok := projectsMap[a.Spec.Template.Spec.GetProject()]; ok {
@@ -111,11 +110,11 @@ func FilterByName(apps []argoappv1.Application, name string) ([]argoappv1.Applic
 }
 
 // FilterAppSetsByName returns an applicationset
-func FilterAppSetsByName(appsets []argoappsetv1.ApplicationSet, name string) ([]argoappsetv1.ApplicationSet, error) {
+func FilterAppSetsByName(appsets []argoappv1.ApplicationSet, name string) ([]argoappv1.ApplicationSet, error) {
 	if name == "" {
 		return appsets, nil
 	}
-	items := make([]argoappsetv1.ApplicationSet, 0)
+	items := make([]argoappv1.ApplicationSet, 0)
 	for i := 0; i < len(appsets); i++ {
 		if appsets[i].Name == name {
 			items = append(items, appsets[i])

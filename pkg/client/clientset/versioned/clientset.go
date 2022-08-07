@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	argoprojv1alpha1 "github.com/argoproj/argo-cd/v2/pkg/client/clientset/versioned/typed/application/v1alpha1"
-	appsetv1alpha1 "github.com/argoproj/argo-cd/v2/pkg/client/clientset/versioned/typed/applicationset/v1alpha1"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"
@@ -16,7 +15,6 @@ import (
 type Interface interface {
 	Discovery() discovery.DiscoveryInterface
 	ArgoprojV1alpha1() argoprojv1alpha1.ArgoprojV1alpha1Interface
-	AppsetV1alpha1() appsetv1alpha1.AppsetV1alpha1Interface
 }
 
 // Clientset contains the clients for groups. Each group has exactly one
@@ -24,17 +22,11 @@ type Interface interface {
 type Clientset struct {
 	*discovery.DiscoveryClient
 	argoprojV1alpha1 *argoprojv1alpha1.ArgoprojV1alpha1Client
-	appsetV1alpha1   *appsetv1alpha1.AppsetV1alpha1Client
 }
 
 // ArgoprojV1alpha1 retrieves the ArgoprojV1alpha1Client
 func (c *Clientset) ArgoprojV1alpha1() argoprojv1alpha1.ArgoprojV1alpha1Interface {
 	return c.argoprojV1alpha1
-}
-
-// AppsetV1alpha1 retrieves the AppsetV1alpha1Client
-func (c *Clientset) AppsetV1alpha1() appsetv1alpha1.AppsetV1alpha1Interface {
-	return c.appsetV1alpha1
 }
 
 // Discovery retrieves the DiscoveryClient
@@ -85,10 +77,6 @@ func NewForConfigAndClient(c *rest.Config, httpClient *http.Client) (*Clientset,
 	if err != nil {
 		return nil, err
 	}
-	cs.appsetV1alpha1, err = appsetv1alpha1.NewForConfigAndClient(&configShallowCopy, httpClient)
-	if err != nil {
-		return nil, err
-	}
 
 	cs.DiscoveryClient, err = discovery.NewDiscoveryClientForConfigAndClient(&configShallowCopy, httpClient)
 	if err != nil {
@@ -111,7 +99,6 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
 	cs.argoprojV1alpha1 = argoprojv1alpha1.New(c)
-	cs.appsetV1alpha1 = appsetv1alpha1.New(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClient(c)
 	return &cs

@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/argoproj/argo-cd/v2/pkg/apis/application"
-	"github.com/argoproj/argo-cd/v2/pkg/apis/applicationset"
 
 	"github.com/argoproj/gitops-engine/pkg/utils/kube"
 	"github.com/ghodss/yaml"
@@ -38,6 +37,7 @@ func getCustomResourceDefinitions() map[string]*extensionsobj.CustomResourceDefi
 	deleteFile("config/webhook")
 	deleteFile("config/argoproj.io_applications.yaml")
 	deleteFile("config/argoproj.io_appprojects.yaml")
+	deleteFile("config/argoproj.io_applicationsets.yaml")
 	deleteFile("config")
 
 	objs, err := kube.SplitYAML(crdYamlBytes)
@@ -107,12 +107,12 @@ func main() {
 		}
 		writeCRDintoFile(crd, path)
 	}
-	crdsappset := getCRDApplicationset()
-	crd := crdsappset[applicationset.ApplicationSetFullName]
-	if crd == nil {
-		panic(fmt.Sprintf("CRD of kind %s was not generated", applicationset.ApplicationSetFullName))
-	}
-	writeCRDintoFile(crd, "manifests/crds/applicationset-crd.yaml")
+	// crdsappset := getCRDApplicationset()
+	// crd := crdsappset[application.ApplicationSetFullName]
+	// if crd == nil {
+	// 	panic(fmt.Sprintf("CRD of kind %s was not generated", application.ApplicationSetFullName))
+	// }
+	// writeCRDintoFile(crd, "manifests/crds/applicationset-crd.yaml")
 }
 
 func writeCRDintoFile(crd *extensionsobj.CustomResourceDefinition, path string) {
@@ -140,7 +140,7 @@ func writeCRDintoFile(crd *extensionsobj.CustomResourceDefinition, path string) 
 func getCRDApplicationset() map[string]*extensionsobj.CustomResourceDefinition {
 	crdYamlBytes, err := exec.Command(
 		"controller-gen",
-		"paths=./pkg/apis/applicationset/...",
+		"paths=./pkg/apis/application/...",
 		"crd:crdVersions=v1,maxDescLen=0",
 		"output:crd:stdout",
 	).Output()

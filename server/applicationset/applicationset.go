@@ -10,11 +10,9 @@ import (
 
 	appsetutils "github.com/argoproj/argo-cd/v2/applicationset/utils"
 	"github.com/argoproj/argo-cd/v2/pkg/apiclient/applicationset"
-	appv1 "github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
-	"github.com/argoproj/argo-cd/v2/pkg/apis/applicationset/v1alpha1"
+	"github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
 	appclientset "github.com/argoproj/argo-cd/v2/pkg/client/clientset/versioned"
 	applisters "github.com/argoproj/argo-cd/v2/pkg/client/listers/application/v1alpha1"
-	appsetlisters "github.com/argoproj/argo-cd/v2/pkg/client/listers/applicationset/v1alpha1"
 	servercache "github.com/argoproj/argo-cd/v2/server/cache"
 	"github.com/argoproj/argo-cd/v2/server/rbacpolicy"
 	apputil "github.com/argoproj/argo-cd/v2/util/appset"
@@ -44,7 +42,7 @@ type Server struct {
 	appclientset   appclientset.Interface
 	appLister      applisters.ApplicationNamespaceLister
 	appsetInformer cache.SharedIndexInformer
-	appsetLister   appsetlisters.ApplicationSetNamespaceLister
+	appsetLister   applisters.ApplicationSetNamespaceLister
 	projLister     applisters.AppProjectNamespaceLister
 	auditLogger    *argo.AuditLogger
 	settings       *settings.SettingsManager
@@ -60,7 +58,7 @@ func NewServer(
 	appclientset appclientset.Interface,
 	appLister applisters.ApplicationNamespaceLister,
 	appsetInformer cache.SharedIndexInformer,
-	appsetLister appsetlisters.ApplicationSetNamespaceLister,
+	appsetLister applisters.ApplicationSetNamespaceLister,
 	projLister applisters.AppProjectNamespaceLister,
 	settings *settings.SettingsManager,
 	namespace string,
@@ -144,7 +142,7 @@ func (s *Server) Create(ctx context.Context, q *applicationset.ApplicationSetCre
 	s.projectLock.RLock(project.Name)
 	defer s.projectLock.RUnlock(project.Name)
 
-	created, err := s.appclientset.AppsetV1alpha1().ApplicationSets(s.ns).Create(ctx, appset, metav1.CreateOptions{})
+	created, err := s.appclientset.ArgoprojV1alpha1().ApplicationSets(s.ns).Create(ctx, appset, metav1.CreateOptions{})
 	if err == nil {
 		s.logAppSetEvent(created, ctx, argo.EventReasonResourceCreated, "created applicationset")
 		s.waitSync(created)
@@ -181,7 +179,7 @@ func (s *Server) validateAndUpdateAppSet(ctx context.Context, newApp *v1alpha1.A
 		return nil, fmt.Errorf("error validating appset: %w", err)
 	}
 
-	existingAppset, err := s.appclientset.AppsetV1alpha1().ApplicationSets(s.ns).Get(ctx, newApp.Name, metav1.GetOptions{})
+	existingAppset, err := s.appclientset.ArgoprojV1alpha1().ApplicationSets(s.ns).Get(ctx, newApp.Name, metav1.GetOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("error getting applicationset: %w", err)
 	}
@@ -233,7 +231,7 @@ func (s *Server) updateAppSet(appset *v1alpha1.ApplicationSet, newAppset *v1alph
 			appset.Annotations = newAppset.Annotations
 		}
 
-		res, err := s.appclientset.AppsetV1alpha1().ApplicationSets(s.ns).Update(ctx, appset, metav1.UpdateOptions{})
+		res, err := s.appclientset.ArgoprojV1alpha1().ApplicationSets(s.ns).Update(ctx, appset, metav1.UpdateOptions{})
 		if err == nil {
 			s.logAppSetEvent(appset, ctx, argo.EventReasonResourceUpdated, "updated applicationset spec")
 			s.waitSync(res)
@@ -243,7 +241,7 @@ func (s *Server) updateAppSet(appset *v1alpha1.ApplicationSet, newAppset *v1alph
 			return nil, err
 		}
 
-		appset, err = s.appclientset.AppsetV1alpha1().ApplicationSets(s.ns).Get(ctx, newAppset.Name, metav1.GetOptions{})
+		appset, err = s.appclientset.ArgoprojV1alpha1().ApplicationSets(s.ns).Get(ctx, newAppset.Name, metav1.GetOptions{})
 		if err != nil {
 			return nil, fmt.Errorf("error getting application: %w", err)
 		}
@@ -253,7 +251,7 @@ func (s *Server) updateAppSet(appset *v1alpha1.ApplicationSet, newAppset *v1alph
 
 func (s *Server) Delete(ctx context.Context, q *applicationset.ApplicationSetDeleteRequest) (*applicationset.ApplicationSetResponse, error) {
 
-	appset, err := s.appclientset.AppsetV1alpha1().ApplicationSets(s.ns).Get(ctx, q.Name, metav1.GetOptions{})
+	appset, err := s.appclientset.ArgoprojV1alpha1().ApplicationSets(s.ns).Get(ctx, q.Name, metav1.GetOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("error getting application: %w", err)
 	}
@@ -274,7 +272,7 @@ func (s *Server) Delete(ctx context.Context, q *applicationset.ApplicationSetDel
 
 }
 
-func (s *Server) validateAppSet(ctx context.Context, appset *v1alpha1.ApplicationSet) (*appv1.AppProject, error) {
+func (s *Server) validateAppSet(ctx context.Context, appset *v1alpha1.ApplicationSet) (*v1alpha1.AppProject, error) {
 	if appset == nil {
 		return nil, fmt.Errorf("ApplicationSet cannot be validated for nil value")
 	}
@@ -300,7 +298,7 @@ func (s *Server) validateAppSet(ctx context.Context, appset *v1alpha1.Applicatio
 	return proj, nil
 }
 
-func (s *Server) checkCreatePermissions(ctx context.Context, appset *v1alpha1.ApplicationSet, project *appv1.AppProject) error {
+func (s *Server) checkCreatePermissions(ctx context.Context, appset *v1alpha1.ApplicationSet, project *v1alpha1.AppProject) error {
 
 	if err := s.enf.EnforceErr(ctx.Value("claims"), rbacpolicy.ResourceProjects, rbacpolicy.ActionGet, project.Name); err != nil {
 		return err

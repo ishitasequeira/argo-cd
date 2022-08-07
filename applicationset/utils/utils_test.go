@@ -9,8 +9,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 
+	argoappsetv1 "github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
 	argoappsv1 "github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
-	argoappsetv1 "github.com/argoproj/argo-cd/v2/pkg/apis/applicationset/v1alpha1"
 )
 
 func TestRenderTemplateParams(t *testing.T) {

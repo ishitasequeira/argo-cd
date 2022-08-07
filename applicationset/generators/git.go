@@ -14,7 +14,7 @@ import (
 	"sigs.k8s.io/yaml"
 
 	"github.com/argoproj/argo-cd/v2/applicationset/services"
-	argoprojiov1alpha1 "github.com/argoproj/argo-cd/v2/pkg/apis/applicationset/v1alpha1"
+	argoprojiov1alpha1 "github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
 )
 
 var _ Generator = (*GitGenerator)(nil)

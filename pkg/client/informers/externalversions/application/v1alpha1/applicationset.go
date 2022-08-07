@@ -6,10 +6,10 @@ import (
 	"context"
 	time "time"
 
-	applicationsetv1alpha1 "github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
+	applicationv1alpha1 "github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
 	versioned "github.com/argoproj/argo-cd/v2/pkg/client/clientset/versioned"
 	internalinterfaces "github.com/argoproj/argo-cd/v2/pkg/client/informers/externalversions/internalinterfaces"
-	v1alpha1 "github.com/argoproj/argo-cd/v2/pkg/client/listers/applicationset/v1alpha1"
+	v1alpha1 "github.com/argoproj/argo-cd/v2/pkg/client/listers/application/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
@@ -46,16 +46,16 @@ func NewFilteredApplicationSetInformer(client versioned.Interface, namespace str
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.AppsetV1alpha1().ApplicationSets(namespace).List(context.TODO(), options)
+				return client.ArgoprojV1alpha1().ApplicationSets(namespace).List(context.TODO(), options)
 			},
 			WatchFunc: func(options v1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.AppsetV1alpha1().ApplicationSets(namespace).Watch(context.TODO(), options)
+				return client.ArgoprojV1alpha1().ApplicationSets(namespace).Watch(context.TODO(), options)
 			},
 		},
-		&applicationsetv1alpha1.ApplicationSet{},
+		&applicationv1alpha1.ApplicationSet{},
 		resyncPeriod,
 		indexers,
 	)
@@ -66,7 +66,7 @@ func (f *applicationSetInformer) defaultInformer(client versioned.Interface, res
 }
 
 func (f *applicationSetInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&applicationsetv1alpha1.ApplicationSet{}, f.defaultInformer)
+	return f.factory.InformerFor(&applicationv1alpha1.ApplicationSet{}, f.defaultInformer)
 }
 
 func (f *applicationSetInformer) Lister() v1alpha1.ApplicationSetLister {

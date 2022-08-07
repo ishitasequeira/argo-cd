@@ -3,10 +3,11 @@ package generators
 import (
 	"context"
 	"fmt"
-	"github.com/valyala/fasttemplate"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/valyala/fasttemplate"
 
 	log "github.com/sirupsen/logrus"
 
@@ -18,7 +19,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/argoproj/argo-cd/v2/applicationset/utils"
-	argoappsetv1alpha1 "github.com/argoproj/argo-cd/v2/pkg/apis/applicationset/v1alpha1"
+	argoappsetv1alpha1 "github.com/argoproj/argo-cd/v2/pkg/apis/application/v1alpha1"
 )
 
 const (
