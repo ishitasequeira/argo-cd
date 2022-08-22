@@ -168,30 +168,29 @@ func ValidateRepo(
 	}
 
 	errMessage := ""
-	// if spec.Sources != nil {
-	// 	for _, source := range spec.Sources {
-	// 		repo, err := db.GetRepository(ctx, source.RepoURL)
-	// 		if err != nil {
-	// 			return nil, err
-	// 		}
-	// 		errRepos := make([]string, 0)
-	// 		if err := TestRepoWithKnownType(ctx, repoClient, repo, app.Spec.Source.IsHelm(), app.Spec.Source.IsHelmOci()); err != nil {
-	// 			errRepos = append(errRepos, repo.Repo)
-	// 		}
-	// 		if len(errRepos) > 0 {
-	// 			errMessage = fmt.Sprintf("repositories not accessible: %v", strings.Join(errRepos, ", "))
-	// 		}
-
-	// 	}
-	// } else {
-	repo, err := db.GetRepository(ctx, spec.Source.RepoURL)
-	if err != nil {
-		return nil, err
+	if spec.Sources != nil {
+		for _, source := range spec.Sources {
+			repo, err := db.GetRepository(ctx, source.RepoURL)
+			if err != nil {
+				return nil, err
+			}
+			errRepos := make([]string, 0)
+			if err := TestRepoWithKnownType(ctx, repoClient, repo, app.Spec.Source.IsHelm(), app.Spec.Source.IsHelmOci()); err != nil {
+				errRepos = append(errRepos, repo.Repo)
+			}
+			if len(errRepos) > 0 {
+				errMessage = fmt.Sprintf("repositories not accessible: %v", strings.Join(errRepos, ", "))
+			}
+		}
+	} else {
+		repo, err := db.GetRepository(ctx, spec.Source.RepoURL)
+		if err != nil {
+			return nil, err
+		}
+		if err := TestRepoWithKnownType(ctx, repoClient, repo, app.Spec.Source.IsHelm(), app.Spec.Source.IsHelmOci()); err != nil {
+			errMessage = fmt.Sprintf("repositories not accessible: %v", repo)
+		}
 	}
-	if err := TestRepoWithKnownType(ctx, repoClient, repo, app.Spec.Source.IsHelm(), app.Spec.Source.IsHelmOci()); err != nil {
-		errMessage = fmt.Sprintf("repositories not accessible: %v", repo)
-	}
-	// }
 	repoAccessible := false
 
 	if errMessage != "" {
