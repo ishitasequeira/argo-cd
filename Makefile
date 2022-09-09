@@ -297,7 +297,7 @@ image: build-ui
 	docker build -t $(IMAGE_PREFIX)argocd:$(IMAGE_TAG) -f dist/Dockerfile.dev dist
 else
 image:
-	DOCKER_BUILDKIT=1 docker build --load -t $(IMAGE_PREFIX)argocd:$(IMAGE_TAG) .
+	DOCKER_BUILDKIT=1 docker build -t $(IMAGE_PREFIX)argocd:$(IMAGE_TAG) .
 endif
 	@if [ "$(DOCKER_PUSH)" = "true" ] ; then docker push $(IMAGE_PREFIX)argocd:$(IMAGE_TAG) ; fi
 
