@@ -613,7 +613,6 @@ func (s *Service) runManifestGenAsync(ctx context.Context, repoRoot, commitSHA, 
 							ch.errCh <- err
 							return
 						}
-						// I think maybe this repo name has to be normalized, becasue blah == blah.git.
 						if _, ok := repoLocks[refSourceMapping.Repo.Repo]; !ok {
 							closer, err := s.repoLock.Lock(gitClient.Root(), targetRevision, true, func() (goio.Closer, error) {
 								return s.checkoutRevision(gitClient, targetRevision, s.initConstants.SubmoduleEnabled)
