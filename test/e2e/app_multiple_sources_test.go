@@ -7,8 +7,6 @@ import (
 	. "github.com/argoproj/argo-cd/v2/test/e2e/fixture"
 	. "github.com/argoproj/argo-cd/v2/test/e2e/fixture/app"
 	. "github.com/argoproj/argo-cd/v2/util/argo"
-
-	// . "github.com/argoproj/argo-cd/v2/util/errors"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -44,15 +42,18 @@ func TestMultiSourceAppCreation(t *testing.T) {
 			assert.Contains(t, output, Name())
 		}).
 		Expect(Success("")).
+		When().Refresh(RefreshTypeHard).Then().
+		Expect(Success("")).
 		And(func(app *Application) {
 			statusByName := map[string]SyncStatusCode{}
 			for _, r := range app.Status.Resources {
 				statusByName[r.Name] = r.Status
 			}
-			assert.Equal(t, SyncStatusCodeOutOfSync, statusByName["pod-1"])
-			assert.Equal(t, SyncStatusCodeOutOfSync, statusByName["pod-2"])
 			// check if the app has 3 resources, guestbook and 2 pods
 			assert.Len(t, statusByName, 3)
+			assert.Equal(t, SyncStatusCodeSynced, statusByName["pod-1"])
+			assert.Equal(t, SyncStatusCodeSynced, statusByName["pod-2"])
+			assert.Equal(t, SyncStatusCodeSynced, statusByName["guestbook-ui"])
 		})
 }
 
