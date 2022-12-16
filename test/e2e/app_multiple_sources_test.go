@@ -42,7 +42,7 @@ func TestMultiSourceAppCreation(t *testing.T) {
 			assert.Contains(t, output, Name())
 		}).
 		Expect(Success("")).
-		When().Refresh(RefreshTypeHard).Then().
+		When().Refresh(RefreshTypeNormal).Then().
 		Expect(Success("")).
 		And(func(app *Application) {
 			statusByName := map[string]SyncStatusCode{}
