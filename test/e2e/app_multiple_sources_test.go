@@ -57,18 +57,18 @@ func TestMultiSourceAppCreation(t *testing.T) {
 		})
 }
 
-func TestMultiSourceAppCreationWithHelmExternalValueFiles(t *testing.T) {
+func TestMultiSourceAppWithHelmExternalValueFiles(t *testing.T) {
 	sources := []ApplicationSource{{
 		RepoURL: RepoURL(RepoURLTypeFile),
-		Path:    "multiple-source-values",
 		Ref:     "values",
 	}, {
 		RepoURL:        "https://github.com/argoproj/argocd-example-apps.git",
 		TargetRevision: "HEAD",
 		Path:           "helm-guestbook",
 		Helm: &ApplicationSourceHelm{
+			ReleaseName: "helm-guestbook",
 			ValueFiles: []string{
-				"$values/values.yaml",
+				"$values/multiple-source-values/values.yaml",
 			},
 		},
 	}}
@@ -96,11 +96,15 @@ func TestMultiSourceAppCreationWithHelmExternalValueFiles(t *testing.T) {
 			assert.Contains(t, output, Name())
 		}).
 		Expect(Success("")).
+		When().Refresh(RefreshTypeNormal).Then().
+		Expect(Success("")).
 		And(func(app *Application) {
-			//Verify delete app does not delete the namespace auto created
-			output, err := Run("", "kubectl", "get", "replicas", AppNamespace())
-			assert.NoError(t, err)
-			assert.Contains(t, output, 2)
+			statusByName := map[string]SyncStatusCode{}
+			for _, r := range app.Status.Resources {
+				statusByName[r.Name] = r.Status
+			}
+			// check if the app has 3 resources, guestbook and 2 pods
+			assert.Len(t, statusByName, 1)
+			assert.Equal(t, SyncStatusCodeSynced, statusByName["helm-guestbook"])
 		})
-
 }
