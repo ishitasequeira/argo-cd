@@ -108,3 +108,58 @@ func TestMultiSourceAppWithHelmExternalValueFiles(t *testing.T) {
 			assert.Equal(t, SyncStatusCodeSynced, statusByName["helm-guestbook"])
 		})
 }
+
+func TestMultiSourceAppWithSourceOverride(t *testing.T) {
+	sources := []ApplicationSource{{
+		RepoURL: RepoURL(RepoURLTypeFile),
+		Path:    guestbookPath,
+	}, {
+		RepoURL: RepoURL(RepoURLTypeFile),
+		Path:    "two-nice-pods",
+	}, {
+		RepoURL: RepoURL(RepoURLTypeFile),
+		Path:    "multiple-source-values",
+	}}
+	ctx := Given(t)
+	ctx.
+		Sources(sources).
+		When().
+		CreateMultiSourceAppFromFile().
+		Then().
+		Expect(SyncStatusIs(SyncStatusCodeOutOfSync)).
+		And(func(app *Application) {
+			assert.Equal(t, Name(), app.Name)
+			for i, source := range app.Spec.GetSources() {
+				assert.Equal(t, sources[i].RepoURL, source.RepoURL)
+				assert.Equal(t, sources[i].Path, source.Path)
+			}
+			assert.Equal(t, DeploymentNamespace(), app.Spec.Destination.Namespace)
+			assert.Equal(t, KubernetesInternalAPIServerAddr, app.Spec.Destination.Server)
+		}).
+		Expect(Event(EventReasonResourceCreated, "create")).
+		And(func(_ *Application) {
+			// app should be listed
+			output, err := RunCli("app", "list")
+			assert.NoError(t, err)
+			assert.Contains(t, output, Name())
+		}).
+		Expect(Success("")).
+		When().Refresh(RefreshTypeNormal).Then().
+		Expect(Success("")).
+		And(func(app *Application) {
+			statusByName := map[string]SyncStatusCode{}
+			for _, r := range app.Status.Resources {
+				statusByName[r.Name] = r.Status
+			}
+			// check if the app has 3 resources, guestbook and 2 pods
+			assert.Len(t, statusByName, 3)
+			assert.Equal(t, SyncStatusCodeSynced, statusByName["pod-1"])
+			assert.Equal(t, SyncStatusCodeSynced, statusByName["pod-2"])
+			assert.Equal(t, SyncStatusCodeSynced, statusByName["guestbook-ui"])
+
+			// check if label was added to the pod to make sure resource was taken from the later source
+			output, err := Run("", "kubectl", "describe", "pods", "pod-1", "-n", DeploymentNamespace())
+			assert.NoError(t, err)
+			assert.Contains(t, output, "foo=bar")
+		})
+}
