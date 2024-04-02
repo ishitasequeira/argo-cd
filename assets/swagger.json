@@ -4219,6 +4219,12 @@
         "revision": {
           "type": "string"
         },
+        "revisionSourceMappings": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "strategy": {
           "$ref": "#/definitions/v1alpha1SyncStrategy"
         },

@@ -130,6 +130,7 @@ message ApplicationSyncRequest {
 	optional SyncOptions syncOptions = 11;
 	optional string appNamespace = 12;
 	optional string project = 13;
+	map<int64, string> revisionSourceMappings = 14;
 }
 
 // ApplicationUpdateSpecRequest is a request to update application spec

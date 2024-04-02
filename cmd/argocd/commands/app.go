@@ -1827,6 +1827,8 @@ func NewApplicationSyncCommand(clientOpts *argocdclient.ClientOptions) *cobra.Co
 		projects                []string
 		output                  string
 		appNamespace            string
+		revisions               []string
+		sourceIndexes           []int64
 	)
 	var command = &cobra.Command{
 		Use:   "sync [APPNAME... | -l selector | --project project-name]",
@@ -1946,9 +1948,10 @@ func NewApplicationSyncCommand(clientOpts *argocdclient.ClientOptions) *cobra.Co
 				})
 				errors.CheckError(err)
 
+				var revisionSourceMappings map[int64]string
 				if app.Spec.HasMultipleSources() {
 					if revision != "" {
-						log.Fatal("argocd cli does not work on multi-source app with --revision flag")
+						log.Fatal("argocd cli does not work on multi-source app with --revision flag. Use --revisions and --source-indexes flags.")
 						return
 					}
 
@@ -1956,6 +1959,20 @@ func NewApplicationSyncCommand(clientOpts *argocdclient.ClientOptions) *cobra.Co
 						log.Fatal("argocd cli does not work on multi-source app with --local flag")
 						return
 					}
+
+					if len(revisions) != len(sourceIndexes) {
+						log.Fatal("While using revisions and source-indexes, length of values for both flags should be same.")
+						return
+					}
+
+					revisionSourceMappings = make(map[int64]string, 0)
+					for i, index := range sourceIndexes {
+						if index <= 0 {
+							errors.CheckError(fmt.Errorf("source-index cannot be less than or equal to 0, Index starts at 1"))
+						}
+						revisionSourceMappings[index] = revisions[i]
+					}
+					diffOption.revisionSourceMappings = &revisionSourceMappings
 				}
 
 				// filters out only those resources that needs to be synced
@@ -2013,15 +2030,16 @@ func NewApplicationSyncCommand(clientOpts *argocdclient.ClientOptions) *cobra.Co
 				}
 
 				syncReq := application.ApplicationSyncRequest{
-					Name:         &appName,
-					AppNamespace: &appNs,
-					DryRun:       &dryRun,
-					Revision:     &revision,
-					Resources:    filteredResources,
-					Prune:        &prune,
-					Manifests:    localObjsStrings,
-					Infos:        getInfos(infos),
-					SyncOptions:  syncOptionsFactory(),
+					Name:                   &appName,
+					AppNamespace:           &appNs,
+					DryRun:                 &dryRun,
+					Revision:               &revision,
+					Resources:              filteredResources,
+					Prune:                  &prune,
+					Manifests:              localObjsStrings,
+					Infos:                  getInfos(infos),
+					SyncOptions:            syncOptionsFactory(),
+					RevisionSourceMappings: revisionSourceMappings,
 				}
 
 				switch strategy {
@@ -2117,6 +2135,8 @@ func NewApplicationSyncCommand(clientOpts *argocdclient.ClientOptions) *cobra.Co
 	command.Flags().StringArrayVar(&projects, "project", []string{}, "Sync apps that belong to the specified projects. This option may be specified repeatedly.")
 	command.Flags().StringVarP(&output, "output", "o", "wide", "Output format. One of: json|yaml|wide|tree|tree=detailed")
 	command.Flags().StringVarP(&appNamespace, "app-namespace", "N", "", "Only sync an application in namespace")
+	command.Flags().StringArrayVar(&revisions, "revisions", []string{}, "Show manifests at specific revisions (comma-separated) for the index of sources in source-indexes")
+	command.Flags().Int64SliceVar(&sourceIndexes, "source-indexes", []int64{}, "List of source indexes. Default is empty array. Indexes start at 1.")
 	return command
 }
 
