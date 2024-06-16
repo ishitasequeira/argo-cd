@@ -31,7 +31,7 @@ jobs:
       docs: ${{ steps.filter.outputs.docs_any_changed }}
     steps:
       - uses: actions/checkout@8410ad0602e1e429cee44a835ae9f77f654a6694 # v4.0.0
-      - uses: tj-actions/changed-files@90a06d6ba9543371ab4df8eeca0be07ca6054959 # v42.0.2
+      - uses: tj-actions/changed-files@d6babd6899969df1a11d14c368283ea4436bca78 # v44.5.2
         id: filter
         with:
           # Any file which is not under docs/, ui/ or is not a markdown file is counted as a backend file
@@ -370,7 +370,7 @@ jobs:
         run: |
           go tool covdata percent -i=test-results,e2e-code-coverage/applicationset-controller -o test-results/full-coverage.out
       - name: Upload code coverage information to codecov.io
-        uses: codecov/codecov-action@125fc84a9a348dbcf27191600683ec096ec9021c # v4.4.1
+        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0
         with:
           file: test-results/full-coverage.out
           fail_ci_if_error: true
@@ -380,7 +380,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        uses: SonarSource/sonarqube-scan-action@86fe81775628f1c6349c28baab87881a2170f495 # v2.1.0
+        uses: SonarSource/sonarqube-scan-action@540792c588b5c2740ad2bb4667db5cd46ae678f2 # v2.2
         if: env.sonar_secret != ''
   test-e2e:
     name: Run end-to-end tests
@@ -398,8 +398,6 @@ jobs:
           - version: v1.27.10
             latest: false
           - version: v1.26.13
-            latest: false
-          - version: v1.25.16
             latest: false
     needs:
       - build-go
